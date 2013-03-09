@@ -2,13 +2,22 @@ HC	= ghc
 HFLAGS	= -O2
 
 CC	= gcc
-CFLAGS	= -O2 -I/usr/local/include
+CFLAGS	= -O2
 
-LDFLAGS	= -L/usr/local/lib -lgsl
+LDFLAGS	= -lgsl
+
+# unusual location for the GSL installation
+GSLPATH =
+
 
 COBJ	= gsl_interp.o
 
 MODULE	= GSLInterp
+
+ifneq ($(strip $(GSLPATH)),)
+	CFLAGS += -I$(GSLPATH)/include
+	LDFLAGS += -L$(GSLPATH)/lib
+endif
 
 .PHONY:	test
 test:	test.x
