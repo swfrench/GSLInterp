@@ -18,6 +18,7 @@ module GSLInterp
 , interpEval
 , interpEvalDeriv
 , interpEvalSecondDeriv
+, interpEvalInteg
 ) where
 
 import Foreign.C
@@ -64,6 +65,11 @@ foreign import ccall "gsl_interp_eval_deriv2_wrapper" gslInterpEvalSecondDeriv
   -> CDouble
   -> CDouble
 
+foreign import ccall "gsl_interp_eval_integ_wrapper" gslInterpEvalInteg
+  :: InterpStructPtr
+  -> CDouble
+  -> CDouble
+  -> CDouble
 
 -- Helpers used below
 
@@ -80,6 +86,13 @@ wrapDouble
   -> Double
 wrapDouble f = realToFrac . f . realToFrac
 
+-- Converts a function of type CDouble -> CDouble -> CDouble to one of Double -> Double -> Double
+wrapDouble3
+  :: (CDouble -> CDouble -> CDouble)
+  -> Double
+  -> Double
+  -> Double
+wrapDouble3 f x = wrapDouble $ f (realToFrac x)
 
 -- | Initialization of a GSL cubic-spline interpolant
 --
@@ -132,3 +145,11 @@ interpEvalSecondDeriv
   -> Double
   -> Double
 interpEvalSecondDeriv = wrapDouble . gslInterpEvalSecondDeriv
+
+-- | Evaluate the defintie integral of the cubic spline interpolant associated with the supplied interpolant structure within the specified range
+interpEvalInteg
+  :: InterpStructPtr
+  -> Double
+  -> Double
+  -> Double
+interpEvalInteg = wrapDouble3 . gslInterpEvalInteg
