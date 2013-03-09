@@ -1,14 +1,15 @@
+# haskell compiler and compilation flags
 HC	= ghc
 HFLAGS	= -O2
 
+# C compiler and compilation flags
 CC	= gcc
 CFLAGS	= -O2
 
-LDFLAGS	= -lgsl
-
-# unusual location for the GSL installation
+# If needed, path for unusually-located GSL installations
 GSLPATH =
 
+LDFLAGS	= -lgsl
 
 COBJ	= gsl_interp.o
 
@@ -23,7 +24,7 @@ endif
 test:	test.x
 	./test.x
 
-test.x:	$(COBJ) $(MODULE).hs Test.hs 
+test.x:	$(COBJ) $(MODULE).hs Test.hs
 	$(HC) $(HFLAGS) --make $(MODULE).hs Test.hs $(COBJ) $(LDFLAGS) -o $@
 
 .PHONY: doc
