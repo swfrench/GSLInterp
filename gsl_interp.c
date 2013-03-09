@@ -8,7 +8,7 @@
 
 #define LOG_ERROR stderr
 
-/* Persistent data structure (threaded state) representing the cubic spline 
+/* Persistent data structure (threaded state) representing the cubic spline
  * interpolant, static storage for associated samples, and helper structures */
 struct interpolant
 {
@@ -51,7 +51,7 @@ gsl_interp_init_wrapper(double *x, double *y, int n)
 	memcpy(new->x, x, (size_t)(n) * sizeof(*new->x));
 	memcpy(new->y, y, (size_t)(n) * sizeof(*new->y));
 	/* gsl init */
-	new->acc = gsl_interp_accel_alloc();	
+	new->acc = gsl_interp_accel_alloc();
 	new->interp = gsl_interp_alloc(gsl_interp_cspline, new->n);
 	gsl_interp_init(new->interp, new->x, new->y, new->n);
 	return new;
@@ -67,20 +67,26 @@ gsl_interp_free_wrapper(interp_st *p)
 	free(p);
 }
 
-double 
+double
 gsl_interp_eval_wrapper(interp_st *p, double x)
 {
 	return gsl_interp_eval(p->interp, p->x, p->y, x, p->acc);
 }
 
-double 
+double
 gsl_interp_eval_deriv_wrapper(interp_st *p, double x)
 {
 	return gsl_interp_eval_deriv(p->interp, p->x, p->y, x, p->acc);
 }
 
-double 
+double
 gsl_interp_eval_deriv2_wrapper(interp_st *p, double x)
 {
 	return gsl_interp_eval_deriv2(p->interp, p->x, p->y, x, p->acc);
+}
+
+double
+gsl_interp_eval_integ_wrapper(interp_st *p, double x0, double x1)
+{
+	return gsl_interp_eval_integ(p->interp, p->x, p->y, x0, x1, p->acc);
 }
