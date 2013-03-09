@@ -13,9 +13,10 @@ test = do
   s <- interpInit xs ys
   case s of 
     Just p  -> sequence_
-      [ printf "%+f ~ %+f\n" (interpEval p x) (sin x)
-      , printf "%+f ~ %+f\n" (interpEvalDeriv p x) (cos x)
-      , printf "%+f ~ %+f\n" (interpEvalSecondDeriv p x) (- (sin x))
+      [ printf "%+e ~ %+e\n" (interpEval p x) (sin x)
+      , printf "%+e ~ %+e\n" (interpEvalDeriv p x) (cos x)
+      , printf "%+e ~ %+e\n" (interpEvalSecondDeriv p x) (- (sin x))
+      , printf "%+e ~ %+e\n" (interpEvalInteg p x (x + 0.1)) (- (cos (x + 0.1) - cos x))
       , interpFree p]
     Nothing -> return ()
 
