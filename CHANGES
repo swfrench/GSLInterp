@@ -1,0 +1,5 @@
+0.2.0.0
+-------
+* API changes
+  - interpInit now requires a fill-value argument, which is returned when the
+    interpolant is evaluated outside the domain on which it is defined.
