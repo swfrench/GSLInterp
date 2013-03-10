@@ -1,1 +1,5 @@
-Haskell FFI for cubic-spline interpolation in the GNU Scientific Library
+Cubic-spline interpolation using the GNU Scientific Library
+-----------------------------------------------------------
+
+A haskell interface for cubic-spline interpolation using the gsl_interp_* family
+of functions.
