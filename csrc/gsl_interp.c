@@ -8,8 +8,11 @@
 
 #define LOG_ERROR stderr
 
-/* Persistent data structure (threaded state) representing the cubic spline
- * interpolant, static storage for associated samples, and helper structures */
+/* struct interpolant
+ * ------------------
+ * Persistent data structure (threaded state) representing the cubic spline
+ * interpolant, static storage for associated samples, helper structures, and
+ * fill value for out-of-bounds errors */
 struct interpolant
 {
 	int n;
@@ -81,17 +84,29 @@ gsl_interp_eval_wrapper(interp_st *p, double x)
 double
 gsl_interp_eval_deriv_wrapper(interp_st *p, double x)
 {
-	return gsl_interp_eval_deriv(p->interp, p->x, p->y, x, p->acc);
+	double y;
+	if (gsl_interp_eval_deriv_e(p->interp, p->x, p->y, x, p->acc, &y) == GSL_EDOM)
+		return p->fill_value;
+	else
+		return y;
 }
 
 double
 gsl_interp_eval_deriv2_wrapper(interp_st *p, double x)
 {
-	return gsl_interp_eval_deriv2(p->interp, p->x, p->y, x, p->acc);
+	double y;
+	if (gsl_interp_eval_deriv2_e(p->interp, p->x, p->y, x, p->acc, &y) == GSL_EDOM)
+		return p->fill_value;
+	else
+		return y;
 }
 
 double
 gsl_interp_eval_integ_wrapper(interp_st *p, double x0, double x1)
 {
-	return gsl_interp_eval_integ(p->interp, p->x, p->y, x0, x1, p->acc);
+	double y;
+	if (gsl_interp_eval_integ_e(p->interp, p->x, p->y, x0, x1, p->acc, &y) == GSL_EDOM)
+		return p->fill_value;
+	else
+		return y;
 }
