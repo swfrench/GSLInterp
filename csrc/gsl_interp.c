@@ -13,14 +13,14 @@
 struct interpolant
 {
 	int n;
-	double *x, *y;
+	double *x, *y, fill_value;
 	gsl_interp_accel *acc;
 	gsl_interp *interp;
 };
 typedef struct interpolant interp_st;
 
 interp_st *
-gsl_interp_init_wrapper(double *x, double *y, int n)
+gsl_interp_init_wrapper(double *x, double *y, int n, double fill_value)
 {
 	interp_st *new = malloc(sizeof(interp_st));
 	if (new == NULL) {
@@ -30,6 +30,7 @@ gsl_interp_init_wrapper(double *x, double *y, int n)
 		return NULL;
 	}
 	new->n = n;
+	new->fill_value = fill_value;
 	new->x = malloc((size_t)(n) * sizeof(*new->x));
 	if (new->x == NULL) {
 #ifdef VERBOSE_ERRORS
@@ -70,7 +71,11 @@ gsl_interp_free_wrapper(interp_st *p)
 double
 gsl_interp_eval_wrapper(interp_st *p, double x)
 {
-	return gsl_interp_eval(p->interp, p->x, p->y, x, p->acc);
+	double y;
+	if (gsl_interp_eval_e(p->interp, p->x, p->y, x, p->acc, &y) == GSL_EDOM)
+		return p->fill_value;
+	else
+		return y;
 }
 
 double

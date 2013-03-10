@@ -45,6 +45,7 @@ foreign import ccall "gsl_interp_init_wrapper" gslInterpInit
   :: Ptr CDouble
   -> Ptr CDouble
   -> CInt
+  -> CDouble
   -> IO InterpStructPtr
 
 foreign import ccall "gsl_interp_free_wrapper" gslInterpFree
@@ -101,8 +102,9 @@ wrapDouble3 f x = wrapDouble $ f (realToFrac x)
 interpInit
   :: V.Vector Double              -- ^ Unboxed @Vector@ of abscissae
   -> V.Vector Double              -- ^ Unboxed @Vector@ of ordinates
+  -> Double                       -- ^ Fill-value returned on bounds errors
   -> IO (Maybe InterpStructPtr)   -- ^ @Maybe@ pointer to the resulting interpolant structure (returns @Nothing@ on failure)
-interpInit xs ys = do
+interpInit xs ys v = do
   -- convert to S.Vector CDouble, extract ForeignPtrs
   let (fpx,nx) = S.unsafeToForeignPtr0 . toStorable $ xs
       (fpy,ny) = S.unsafeToForeignPtr0 . toStorable $ ys
@@ -111,7 +113,7 @@ interpInit xs ys = do
     then printf "Error [interpInit]: vector dimension mismatch: %i /= %i\n" nx ny >> return Nothing
     else do
       -- initialize foreign interpolant state structure
-      interp <- gslInterpInit (unsafeForeignPtrToPtr fpx) (unsafeForeignPtrToPtr fpy) (fromIntegral ny)
+      interp <- gslInterpInit (unsafeForeignPtrToPtr fpx) (unsafeForeignPtrToPtr fpy) (fromIntegral ny) (realToFrac v)
       -- ensure the ForeignPtrs live until _after_ call to gslInterpInit
       touchForeignPtr fpx
       touchForeignPtr fpy
