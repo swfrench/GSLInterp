@@ -11,7 +11,7 @@
 -- the 'InterpStructPtr' as a plain @Ptr@ type alias keeps the evaluation
 -- functions out of the @IO@ Monad (no requirement to use @withForeignPtr@)
 -- or alternatively from using @unsafeForeignPtrToPtr@ excessively.
-module GSLInterp
+module Math.GSLInterp
 ( InterpStruct (..)
 , InterpStructPtr
 , interpInit
