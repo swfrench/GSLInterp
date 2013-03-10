@@ -1,13 +1,13 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# CFILES csrc/gsl_interp.c #-}
 
--- | Cubic-spline interpolation with the GSL
+-- | Cubic-spline interpolation (natural boundary conditions) with the GNU Scientific Library
 --
--- All @Vector@ types are @Unboxed@ @Double@s - conversion to @Storable@ @CDouble@s is performed internally.
+-- All @Double@ @Vector@ types are @Unboxed@ - conversion to @Storable@ @CDouble@ is performed internally.
 --
 -- TODO: Possible improvements include wrapping the 'InterpStructPtr' in a
 -- @ForeignPtr@ and registering the 'interpFree' function as a finalizer.
--- For now, I prefer to handle the deallocation myself. In addition, leaving
+-- For now, I prefer to handle the deallocation explicitly. In addition, leaving
 -- the 'InterpStructPtr' as a plain @Ptr@ type alias keeps the evaluation
 -- functions out of the @IO@ Monad (no requirement to use @withForeignPtr@)
 -- or alternatively from using @unsafeForeignPtrToPtr@ excessively.
@@ -130,29 +130,29 @@ interpFree p = unless (p == nullPtr) (gslInterpFree p)
 
 -- | Evaluate the cubic spline interpolant associated with the supplied interpolant structure
 interpEval
-  :: InterpStructPtr
-  -> Double
-  -> Double
+  :: InterpStructPtr -- ^ Foreign interpolant structure
+  -> Double          -- ^ x-value
+  -> Double          -- ^ interpolated y-value
 interpEval = wrapDouble . gslInterpEval
 
 -- | Evaluate the first derivative of the cubic spline interpolant associated with the supplied interpolant structure
 interpEvalDeriv
-  :: InterpStructPtr
-  -> Double
-  -> Double
+  :: InterpStructPtr -- ^ Foreign interpolant structure
+  -> Double          -- ^ x-value
+  -> Double          -- ^ derivative
 interpEvalDeriv = wrapDouble . gslInterpEvalDeriv
 
 -- | Evaluate the second derivative of the cubic spline interpolant associated with the supplied interpolant structure
 interpEvalSecondDeriv
-  :: InterpStructPtr
-  -> Double
-  -> Double
+  :: InterpStructPtr -- ^ Foreign interpolant structure
+  -> Double          -- ^ x-value
+  -> Double          -- ^ second derivative
 interpEvalSecondDeriv = wrapDouble . gslInterpEvalSecondDeriv
 
 -- | Evaluate the defintie integral of the cubic spline interpolant associated with the supplied interpolant structure within the specified range
 interpEvalInteg
-  :: InterpStructPtr
-  -> Double
-  -> Double
-  -> Double
+  :: InterpStructPtr -- ^ Foreign interpolant structure
+  -> Double          -- ^ x-value of lower integration bound
+  -> Double          -- ^ x-value of upper integration bound
+  -> Double          -- ^ integral
 interpEvalInteg = wrapDouble3 . gslInterpEvalInteg
