@@ -27,6 +27,9 @@ test:	test.x
 test.x:	$(COBJ) $(MODULE).hs Test.hs
 	$(HC) $(HFLAGS) --make $(MODULE).hs Test.hs $(COBJ) $(LDFLAGS) -o $@
 
+gsl_interp.o: c_lib/gsl_interp.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 .PHONY: doc
 doc:	$(MODULE).hs
 	mkdir -p doc
