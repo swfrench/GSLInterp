@@ -17,7 +17,8 @@ library
   extra-libraries:     gsl
 
 Test-suite tests
-  type:          exitcode-stdio-1.0
-  main-is:       Test.hs
-  build-depends: base ==4.5.*, vector ==0.10.*, HUnit ==1.2.*, GSLInterp
+  type:           exitcode-stdio-1.0
+  main-is:        Test.hs
+  hs-source-dirs: tests
+  build-depends:  base ==4.5.*, vector ==0.10.*, HUnit ==1.2.*, GSLInterp
 
