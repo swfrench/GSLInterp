@@ -1,4 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
+{-# CFILES c_lib/gsl_interp.c #-}
 
 -- | Cubic-spline interpolation with the GSL
 --
