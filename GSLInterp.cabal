@@ -13,6 +13,7 @@ cabal-version:       >=1.8
 library
   exposed-modules:     Math.GSLInterp
   build-depends:       base ==4.5.*, vector ==0.10.*
+  hs-source-dirs:      src
   c-sources:           csrc/gsl_interp.c
   extra-libraries:     gsl
 
